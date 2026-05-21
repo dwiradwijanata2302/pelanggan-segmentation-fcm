@@ -14,7 +14,9 @@ def show_results():
 
     # Tabel Rata-rata
     print("\nProfil Karakteristik Tiap Kelompok:")
-    print(df.groupby('Cluster')[['Usia', 'Pendapatan_Tahunan_Ribuan_USD', 'Pengeluaran_USD']].mean())
+    profil_cluster = df.groupby('Cluster')[['Usia', 'Pendapatan_Tahunan_Ribuan_USD', 'Pengeluaran_USD']].mean()
+    profil_cluster['Usia'] = profil_cluster['Usia'].round(0)
+    print(profil_cluster)
 
 if __name__ == "__main__":
     show_results()
