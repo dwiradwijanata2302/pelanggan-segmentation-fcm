@@ -1,36 +1,93 @@
-# 🛍️ Customer Segmentation menggunakan Fuzzy C-Means (FCM)
+# Customer Segmentation using Fuzzy C-Means
 
-Proyek ini adalah implementasi algoritma *Machine Learning* untuk melakukan segmentasi pelanggan mall. Tujuan utama dari proyek ini adalah membantu pihak manajemen mall memahami karakteristik finansial pengunjung agar strategi pemasaran (seperti pemberian diskon atau penawaran keanggotaan VIP) dapat dilakukan secara tepat sasaran.
+Proyek ini berisi implementasi segmentasi pelanggan mall menggunakan algoritma Fuzzy C-Means yang ditulis manual dari nol, tanpa library fuzzy siap pakai. Tujuannya adalah mengelompokkan pelanggan berdasarkan karakteristik usia, pendapatan tahunan, dan skor pengeluaran agar hasil analisis bisa dipakai untuk strategi pemasaran yang lebih tepat sasaran.
 
+## Gambaran Proyek
 
+Pipeline proyek dibagi menjadi tiga tahap:
 
----
+1. `preprocess.py` membersihkan data, menghapus kolom yang tidak diperlukan, membuang outlier dengan metode IQR, lalu melakukan normalisasi dengan `MinMaxScaler`.
+2. `train-fcm.py` menjalankan Fuzzy C-Means manual dari nol menggunakan `numpy`, lalu memberi label cluster pada data bersih.
+3. `visualization.py` menampilkan scatter plot hasil clustering dan profil rata-rata tiap cluster.
 
-## 🧠 Metodologi & Algoritma
-Proyek ini menggunakan algoritma **Fuzzy C-Means (FCM)**. 
-Berbeda dengan K-Means konvensional yang membagi data secara kaku (*hard clustering*), FCM menggunakan pendekatan *soft clustering* (derajat keanggotaan). Hal ini sangat cocok untuk data perilaku manusia di dunia nyata, di mana seorang pelanggan mungkin memiliki kemiripan sifat dengan lebih dari satu kelompok sekaligus, sebelum akhirnya dimasukkan ke kelompok dengan probabilitas tertinggi.
+## Struktur File
 
-**Atribut Data yang Dianalisis:**
-1. Usia (Age)
-2. Pendapatan Tahunan (Annual Income)
-3. Skor Pengeluaran (Spending Score)
+- `data/Pengunjung_Mall.csv` : dataset mentah.
+- `preprocess.py` : preprocessing data, outlier removal, dan normalisasi.
+- `train-fcm.py` : implementasi FCM manual tanpa `skfuzzy`.
+- `visualization.py` : visualisasi hasil cluster dan tabel profil kelompok.
+- `requirements.txt` : daftar dependency.
+- `.gitignore` : mengabaikan file hasil generate seperti `data_siap_fcm.csv` dan `hasil_akhir.csv`.
 
----
+## Alur Kerja
 
-## 📂 Struktur Repositori (Data Pipeline)
-Proyek ini dipecah menjadi tiga tahap (*modular*) sesuai standar industri perangkat lunak:
+### 1. Preprocessing
 
-- `data/Pengunjung_Mall.csv` : Dataset mentah.
-- `preprocess.py` : Skrip untuk membuang kolom yang tidak relevan (ID, Gender) dan melakukan normalisasi rentang skala data (0-1) menggunakan `MinMaxScaler`.
-- `train-fcm.py` : Inti program tempat mesin belajar memetakan 200 data ke dalam 5 titik pusat (centroid).
-- `analytics.py` : Skrip untuk merender visualisasi hasil (Scatter Plot) dan tabel profil kelompok.
-- `requirements.txt` : Daftar dependensi *environment*.
+File `preprocess.py` akan:
 
----
+- membaca `data/Pengunjung_Mall.csv`
+- menghapus kolom `ID_Pelanggan` dan `Gender`
+- menghapus outlier dengan metode IQR
+- melakukan normalisasi nilai ke rentang 0-1
+- menyimpan hasil ke `data_siap_fcm.csv`
 
-## 🚀 Panduan Eksekusi (How to Run)
+### 2. Training FCM Manual
 
-### 1. Persiapan Environment
-Pastikan Python sudah terinstal di sistem. Buka terminal di direktori proyek ini dan jalankan perintah berikut untuk menginstal semua *library* pendukung:
+File `train-fcm.py` akan:
+
+- membaca `data_siap_fcm.csv`
+- menjalankan Fuzzy C-Means
+- menghitung membership, centroid, jarak, dan konvergensi secara iteratif
+- menyimpan hasil cluster ke `hasil_akhir.csv`
+
+### 3. Visualisasi
+
+File `visualization.py` akan:
+
+- membaca `hasil_akhir.csv`
+- menampilkan scatter plot berdasarkan `Pendapatan_Tahunan_Ribuan_USD` dan `Pengeluaran_USD`
+- menampilkan tabel profil rata-rata tiap cluster
+- membulatkan rata-rata usia, sedangkan pendapatan dan pengeluaran tetap sebagai nilai rata-rata asli
+
+## Cara Menjalankan
+
+### 1. Install dependency
+
+Pastikan Python sudah terinstal, lalu jalankan:
+
 ```bash
 pip install -r requirements.txt
+```
+
+### 2. Jalankan preprocessing
+
+```bash
+python preprocess.py
+```
+
+### 3. Jalankan training FCM manual
+
+```bash
+python train-fcm.py
+```
+
+### 4. Tampilkan hasil visualisasi
+
+```bash
+python visualization.py
+```
+
+## Catatan Penting
+
+- File `data_siap_fcm.csv` dan `hasil_akhir.csv` adalah file hasil generate, jadi tidak perlu dipush ke GitHub.
+- Implementasi clustering sudah tidak memakai library fuzzy eksternal seperti `skfuzzy`.
+- Jika jumlah baris berubah karena outlier dihapus, itu normal karena clustering dijalankan pada data bersih.
+
+## Hasil Output
+
+Setelah pipeline selesai, Anda akan mendapatkan:
+
+- file data bersih dan ternormalisasi: `data_siap_fcm.csv`
+- file hasil clustering: `hasil_akhir.csv`
+- scatter plot hasil segmentasi
+- profil karakteristik tiap cluster
