@@ -6,16 +6,16 @@ Proyek ini berisi implementasi segmentasi pelanggan mall menggunakan algoritma F
 
 Pipeline proyek dibagi menjadi tiga tahap:
 
-1. `preprocess.py` membersihkan data, menghapus kolom yang tidak diperlukan, membuang outlier dengan metode IQR, lalu melakukan normalisasi dengan `MinMaxScaler`.
-2. `train-fcm.py` menjalankan Fuzzy C-Means manual dari nol menggunakan `numpy`, lalu memberi label cluster pada data bersih.
-3. `visualization.py` menampilkan scatter plot hasil clustering dan profil rata-rata tiap cluster.
+1. `preprocess.py` membersihkan data, menghapus kolom yang tidak diperlukan, lalu melakukan normalisasi dengan `MinMaxScaler`.
+2. `train-fcm.py` menjalankan Fuzzy C-Means manual dari nol menggunakan `numpy`, lalu memberi label cluster pada subset data uji.
+3. `visualization.py` menampilkan scatter plot hasil clustering, profil rata-rata tiap cluster, dan grafik konvergensi iterasi.
 
 ## Struktur File
 
 - `data/Pengunjung_Mall.csv` : dataset mentah.
 - `preprocess.py` : preprocessing data, outlier removal, dan normalisasi.
 - `train-fcm.py` : implementasi FCM manual tanpa `skfuzzy`.
-- `visualization.py` : visualisasi hasil cluster dan tabel profil kelompok.
+- `visualization.py` : visualisasi hasil cluster, tabel profil kelompok, dan grafik konvergensi.
 - `requirements.txt` : daftar dependency.
 - `.gitignore` : mengabaikan file hasil generate seperti `data_siap_fcm.csv` dan `hasil_akhir.csv`.
 
@@ -27,7 +27,6 @@ File `preprocess.py` akan:
 
 - membaca `data/Pengunjung_Mall.csv`
 - menghapus kolom `ID_Pelanggan` dan `Gender`
-- menghapus outlier dengan metode IQR
 - melakukan normalisasi nilai ke rentang 0-1
 - menyimpan hasil ke `data_siap_fcm.csv`
 
@@ -36,9 +35,12 @@ File `preprocess.py` akan:
 File `train-fcm.py` akan:
 
 - membaca `data_siap_fcm.csv`
-- menjalankan Fuzzy C-Means
-- menghitung membership, centroid, jarak, dan konvergensi secara iteratif
+- mengambil 25 baris pertama sebagai subset uji supaya lebih mudah dicek satu per satu
+- menjalankan Fuzzy C-Means dengan 5 cluster
+- menghitung membership, centroid, objective function, dan konvergensi secara iteratif
 - menyimpan hasil cluster ke `hasil_akhir.csv`
+- menyimpan detail uji per sampel ke `uji_25_sampel.csv`
+- menyimpan riwayat iterasi ke `riwayat_iterasi.csv`
 
 ### 3. Visualisasi
 
@@ -48,6 +50,7 @@ File `visualization.py` akan:
 - menampilkan scatter plot berdasarkan `Pendapatan_Tahunan_Ribuan_USD` dan `Pengeluaran_USD`
 - menampilkan tabel profil rata-rata tiap cluster
 - membulatkan rata-rata usia, sedangkan pendapatan dan pengeluaran tetap sebagai nilai rata-rata asli
+- menampilkan grafik perubahan membership per iterasi supaya alasan berhenti bisa terlihat
 
 ## Cara Menjalankan
 
@@ -81,7 +84,8 @@ python visualization.py
 
 - File `data_siap_fcm.csv` dan `hasil_akhir.csv` adalah file hasil generate, jadi tidak perlu dipush ke GitHub.
 - Implementasi clustering sudah tidak memakai library fuzzy eksternal seperti `skfuzzy`.
-- Jika jumlah baris berubah karena outlier dihapus, itu normal karena clustering dijalankan pada data bersih.
+- Dataset demo dibatasi 25 baris agar hasilnya mudah diuji satu per satu.
+- Iterasi berhenti jika perubahan membership lebih kecil dari batas error, atau jika mencapai iterasi maksimum.
 
 ## Hasil Output
 

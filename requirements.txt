@@ -1,6 +1,5 @@
 pandas
 numpy
-scikit-fuzzy
 matplotlib
 seaborn
 scikit-learn
